@@ -1,0 +1,40 @@
+@model JabbadabbadoeBooking.Models.Booking
+@{
+    ViewData["Title"] = "Betaling afgerond";
+    bool demo = Context.Request.Query.ContainsKey("demo");
+    var paid = Model.Status == JabbadabbadoeBooking.Models.BookingStatus.Confirmed;
+}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h4 mb-3">Bedankt!</h1>
+
+        @if (paid) {
+            <div class="alert alert-success">
+                Je betaling is ontvangen en je reservering is <strong>bevestigd</strong>.
+            </div>
+        } else if (demo) {
+            <div class="alert alert-info">
+                Demo-modus: betaling gesimuleerd. Reservering staat nu als <strong>bevestigd</strong>.
+            </div>
+        } else {
+            <div class="alert alert-warning">
+                We hebben nog geen betaalbevestiging gezien. Dit kan een moment duren. Vernieuw deze pagina straks nog eens.
+            </div>
+        }
+
+        <dl class="row mb-4">
+            <dt class="col-sm-4">Reservering</dt><dd class="col-sm-8">#@Model.Id</dd>
+            <dt class="col-sm-4">Periode</dt><dd class="col-sm-8">@Model.CheckIn.ToString("dd-MM-yyyy") – @Model.CheckOut.ToString("dd-MM-yyyy")</dd>
+            <dt class="col-sm-4">Gasten</dt><dd class="col-sm-8">@Model.Guests</dd>
+            <dt class="col-sm-4">Totaal</dt><dd class="col-sm-8">€ @Model.TotalPrice.ToString("F2")</dd>
+            <dt class="col-sm-4">Status</dt><dd class="col-sm-8">@Model.Status</dd>
+        </dl>
+
+        <a class="btn btn-primary me-2" asp-controller="Bookings" asp-action="Details" asp-route-id="@Model.Id">Bekijk reservering</a>
+        <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Terug naar overzicht</a>
+      </div>
+    </div>
+  </div>
+</div>

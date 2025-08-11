@@ -1,0 +1,64 @@
+@model IEnumerable<JabbadabbadoeBooking.Models.Booking>
+@{
+    ViewData["Title"] = "Admin — Reserveringen";
+}
+
+<h2 class="mb-3">Admin — Reserveringen</h2>
+
+@if (TempData["Message"] != null) {
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+
+<table class="table table-striped align-middle">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Naam</th>
+      <th>Periode</th>
+      <th class="text-center">Gasten</th>
+      <th class="text-end">Totaal</th>
+      <th>Status</th>
+      <th class="text-end">Acties</th>
+    </tr>
+  </thead>
+  <tbody>
+  @foreach (var b in Model) {
+    <tr>
+      <td>@b.Id</td>
+      <td>@b.FirstName @b.LastName</td>
+      <td>@b.CheckIn:dd-MM-yyyy – @b.CheckOut:dd-MM-yyyy</td>
+      <td class="text-center">@b.Guests</td>
+      <td class="text-end">€ @b.TotalPrice.ToString("N2")</td>
+      <td>
+        @if (b.Status == JabbadabbadoeBooking.Models.BookingStatus.Pending) {
+            <span class="badge bg-warning text-dark">Pending</span>
+        } else if (b.Status == JabbadabbadoeBooking.Models.BookingStatus.Confirmed) {
+            <span class="badge bg-success">Confirmed</span>
+        } else if (b.Status == JabbadabbadoeBooking.Models.BookingStatus.Cancelled) {
+            <span class="badge bg-secondary">Cancelled</span>
+        } else {
+            @b.Status
+        }
+      </td>
+      <td class="text-end">
+        <a class="btn btn-sm btn-outline-primary"
+           asp-controller="Bookings" asp-action="Details" asp-route-id="@b.Id">Open</a>
+
+        <a class="btn btn-sm btn-outline-danger"
+           asp-controller="Bookings" asp-action="Cancel" asp-route-id="@b.Id"
+           onclick="return confirm('Annuleer reservering #@b.Id?');">Annuleer</a>
+
+        @if (b.Status == JabbadabbadoeBooking.Models.BookingStatus.Pending) {
+            <form asp-controller="Bookings" asp-action="MarkPaid" method="post" class="d-inline">
+                <input type="hidden" name="id" value="@b.Id" />
+                <button type="submit" class="btn btn-sm btn-outline-success"
+                        onclick="return confirm('Markeer reservering #@b.Id als betaald?');">
+                    Markeer betaald
+                </button>
+            </form>
+        }
+      </td>
+    </tr>
+  }
+  </tbody>
+</table>

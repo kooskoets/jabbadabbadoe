@@ -1,0 +1,74 @@
+@model JabbadabbadoeBooking.Models.Booking
+@{
+    ViewData["Title"] = "Reserveren";
+    var space = (JabbadabbadoeBooking.Models.Space)ViewBag.Space;
+}
+<h1 class="h4 mb-3">Reserveren — @space.Title</h1>
+<div class="alert alert-info">Na bevestigen word je doorgestuurd naar Mollie voor de betaling.</div>
+
+<form asp-action="Create" method="post" class="row g-3">
+  <div class="col-md-3">
+    <label asp-for="CheckIn" class="form-label">Check-in</label>
+    <input asp-for="CheckIn" class="form-control" type="date" />
+    <span asp-validation-for="CheckIn" class="text-danger"></span>
+  </div>
+  <div class="col-md-3">
+    <label asp-for="CheckOut" class="form-label">Check-out</label>
+    <input asp-for="CheckOut" class="form-control" type="date" />
+    <span asp-validation-for="CheckOut" class="text-danger"></span>
+  </div>
+  <div class="col-md-3">
+    <label asp-for="Guests" class="form-label">Gasten</label>
+    <input asp-for="Guests" class="form-control" type="number" min="1" />
+    <span asp-validation-for="Guests" class="text-danger"></span>
+  </div>
+
+  <div class="col-12"><h2 class="h5 mt-3">NAW-gegevens</h2></div>
+
+  <div class="col-md-4">
+    <label asp-for="FirstName" class="form-label">Voornaam</label>
+    <input asp-for="FirstName" class="form-control" />
+    <span asp-validation-for="FirstName" class="text-danger"></span>
+  </div>
+  <div class="col-md-4">
+    <label asp-for="LastName" class="form-label">Achternaam</label>
+    <input asp-for="LastName" class="form-control" />
+    <span asp-validation-for="LastName" class="text-danger"></span>
+  </div>
+  <div class="col-md-4">
+    <label asp-for="Email" class="form-label">E-mail</label>
+    <input asp-for="Email" class="form-control" type="email" />
+    <span asp-validation-for="Email" class="text-danger"></span>
+  </div>
+  <div class="col-md-4">
+    <label asp-for="Phone" class="form-label">Telefoon</label>
+    <input asp-for="Phone" class="form-control" />
+  </div>
+  <div class="col-md-6">
+    <label asp-for="Address" class="form-label">Adres</label>
+    <input asp-for="Address" class="form-control" />
+    <span asp-validation-for="Address" class="text-danger"></span>
+  </div>
+  <div class="col-md-3">
+    <label asp-for="PostalCode" class="form-label">Postcode</label>
+    <input asp-for="PostalCode" class="form-control" />
+    <span asp-validation-for="PostalCode" class="text-danger"></span>
+  </div>
+  <div class="col-md-3">
+    <label asp-for="City" class="form-label">Plaats</label>
+    <input asp-for="City" class="form-control" />
+    <span asp-validation-for="City" class="text-danger"></span>
+  </div>
+  <div class="col-md-4">
+    <label asp-for="Country" class="form-label">Land</label>
+    <input asp-for="Country" class="form-control" />
+    <span asp-validation-for="Country" class="text-danger"></span>
+  </div>
+
+  <div class="col-12">
+    <button class="btn btn-primary">Bevestig & Betaal</button>
+    <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Annuleren</a>
+  </div>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

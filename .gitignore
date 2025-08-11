@@ -1,0 +1,18 @@
+﻿# VS / .NET
+.vs/
+bin/
+obj/
+TestResults/
+*.user
+*.suo
+*.rsuser
+*.DotSettings.user
+packages/
+*.log
+
+# secrets / lokaal
+appsettings.*.local.json
+secrets.json
+
+# build artefacts
+*.coverage

@@ -1,0 +1,89 @@
+@using System.Globalization
+@using JabbadabbadoeBooking.Models
+@{
+    ViewData["Title"] = "Jabbadabbadoe — Studio";
+    var space = (JabbadabbadoeBooking.Models.Space)ViewBag.Space;
+    var bookings = (List<Booking>)ViewBag.Bookings;
+    int year = (int)ViewBag.Year, month = (int)ViewBag.Month;
+    var first = new DateOnly(year, month, 1);
+    var days = DateTime.DaysInMonth(year, month);
+    bool IsBooked(DateOnly d) => bookings.Any(b => d >= b.CheckIn && d < b.CheckOut);
+    var monthLabel = new DateTime(year, month, 1).ToString("MMMM yyyy", CultureInfo.GetCultureInfo("nl-NL"));
+}
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h3 mb-3">@space.Title</h1>
+                <p>@space.Description</p>
+                <div class="d-flex gap-2 mb-2">
+                    <span class="badge bg-primary">Max @space.MaxGuests gasten</span>
+                    <span class="badge bg-success">€ @space.NightlyRate per nacht</span>
+                    <span class="badge bg-secondary">Schoonmaak € @space.CleaningFee</span>
+                </div>
+                <a class="btn btn-primary" asp-controller="Bookings" asp-action="Create">Reserveer nu</a>
+            </div>
+            <div class="row g-0 px-3 pb-3">
+                @foreach (var fn in (space.PhotoList ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    <div class="col-4 p-1">
+                        <img class="img-fluid rounded" src="~/images/listing/@fn.Trim()" alt="Foto placeholder" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">Beschikbaarheid</h2>
+                <div class="d-flex justify-content-between mb-2">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Index" asp-route-year="@(month == 1 ? year - 1 : year)" asp-route-month="@(month == 1 ? 12 : month - 1)">← Vorige</a>
+                    <div class="fw-semibold">@monthLabel</div>
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Index" asp-route-year="@(month == 12 ? year + 1 : year)" asp-route-month="@(month == 12 ? 1 : month + 1)">Volgende →</a>
+                </div>
+                <table class="table table-bordered text-center align-middle calendar">
+                    <thead>
+                        <tr>
+                            <th>Ma</th>
+                            <th>Di</th>
+                            <th>Wo</th>
+                            <th>Do</th>
+                            <th>Vr</th>
+                            <th>Za</th>
+                            <th>Zo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var startDay = (int)new DateTime(year, month, 1).DayOfWeek; // Sunday=0
+                            var offset = (startDay + 6) % 7; // Monday=0
+                            int day = 1 - offset;
+                            for (int r = 0; r < 6; r++)
+                            {
+                                <tr>
+                                    @for (int c = 0; c < 7; c++)
+                                    {
+                                        if (day < 1 || day > days)
+                                        {
+                                            <td class="text-muted">·</td>
+                                        }
+                                        else
+                                        {
+                                            var d = new DateOnly(year, month, day);
+                                            var booked = IsBooked(d);
+                                            <td class="@(booked ? "bg-danger text-white" : "")">@day</td>
+                                        }
+                                        day++;
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <div class="small"><span class="badge bg-danger"> </span> bezet · witte vakjes = beschikbaar</div>
+                <div class="mt-2"><a href="/ical/space.ics" class="small">➡ Download .ics (voor je agenda)</a></div>
+            </div>
+        </div>
+    </div>
+</div>

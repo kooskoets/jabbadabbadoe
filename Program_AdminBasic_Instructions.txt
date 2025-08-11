@@ -1,0 +1,32 @@
+Program.cs wijzigingen (Admin Basic Auth)
+========================================
+
+1) Registratie (boven AddAuthorization/UseAuthorization):
+--------------------------------------------------------
+builder.Services.AddAuthentication() // laat Identity de default
+    .AddScheme<JabbadabbadoeBooking.Security.AdminBasicAuthenticationOptions,
+               JabbadabbadoeBooking.Security.AdminBasicAuthenticationHandler>("AdminBasic", null);
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("AdminOnly", p => p.RequireAuthenticatedUser()
+                                  .AddAuthenticationSchemes("AdminBasic"));
+
+2) Middleware volgorde:
+-----------------------
+app.UseAuthentication();
+app.UseAuthorization();
+
+3) Controller attribuut:
+------------------------
+[Authorize(AuthenticationSchemes = "AdminBasic", Policy = "AdminOnly")]
+public async Task<IActionResult> AdminList() { ... }
+
+4) appsettings.json:
+--------------------
+"Admin": {
+  "Username": "owner",
+  "Password": "ChangeThisAdminPassword123!"
+}
+
+Na aanpassingen: herstart, open incognito en ga naar /Bookings/AdminList.
+Je browser toont nu een Basic-auth prompt.
