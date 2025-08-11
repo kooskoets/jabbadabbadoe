@@ -1,0 +1,17 @@
+name: .NET Format
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+      - name: Check format
+        run: dotnet format --verify-no-changes
