@@ -1,0 +1,13 @@
+@model JabbadabbadoeBooking.Models.Space
+@{
+    ViewData["Title"] = "Nieuw appartement";
+}
+<h1 class="h3 mb-3">Nieuw appartement</h1>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+  <partial name="_Form" model="Model" />
+  <div class="mt-3">
+    <a asp-action="Index" class="btn btn-outline-secondary">Terug</a>
+    <button class="btn btn-primary" type="submit">Opslaan</button>
+  </div>
+</form>

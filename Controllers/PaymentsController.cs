@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using JabbadabbadoeBooking.Data;
+﻿using JabbadabbadoeBooking.Data;
 using JabbadabbadoeBooking.Models;
 using JabbadabbadoeBooking.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Mollie.Api.Client;
 
 namespace JabbadabbadoeBooking.Controllers;

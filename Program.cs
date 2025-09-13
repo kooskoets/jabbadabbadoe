@@ -1,12 +1,9 @@
+﻿using JabbadabbadoeBooking.Data;
+using JabbadabbadoeBooking.Services;   // voor BookingService/PaymentService
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using JabbadabbadoeBooking.Data;
-using JabbadabbadoeBooking.Services;   // voor BookingService/PaymentService
-using JabbadabbadoeBooking.Security;   // voor de Basic-auth klassen
 
-// Aliassen om ambigu�teit te voorkomen
-using AdminBasicOptions = JabbadabbadoeBooking.Security.AdminBasicAuthenticationOptions;
-using AdminBasicHandler = JabbadabbadoeBooking.Security.AdminBasicAuthenticationHandler;
+// Aliassen om ambiguïteit te voorkomen
 
 
 var builder = WebApplication.CreateBuilder(args);

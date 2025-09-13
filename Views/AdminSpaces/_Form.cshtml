@@ -1,0 +1,57 @@
+@model JabbadabbadoeBooking.Models.Space
+@{
+    var nl = System.Globalization.CultureInfo.GetCultureInfo("nl-NL");
+}
+<div class="row g-3">
+  <div class="col-md-8">
+    <div class="mb-3">
+      <label asp-for="Title" class="form-label"></label>
+      <input asp-for="Title" class="form-control" />
+      <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+      <label asp-for="Description" class="form-label"></label>
+      <textarea asp-for="Description" rows="6" class="form-control"></textarea>
+      <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-sm-4">
+        <label asp-for="NightlyRate" class="form-label"></label>
+        <input asp-for="NightlyRate" class="form-control" />
+        <span asp-validation-for="NightlyRate" class="text-danger"></span>
+      </div>
+      <div class="col-sm-4">
+        <label asp-for="CleaningFee" class="form-label"></label>
+        <input asp-for="CleaningFee" class="form-control" />
+        <span asp-validation-for="CleaningFee" class="text-danger"></span>
+      </div>
+      <div class="col-sm-4">
+        <label asp-for="MaxGuests" class="form-label"></label>
+        <input asp-for="MaxGuests" class="form-control" />
+        <span asp-validation-for="MaxGuests" class="text-danger"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Foto’s toevoegen</label>
+    <input type="file" name="files" class="form-control" multiple accept="image/*" />
+    <div class="form-text">Je kunt meerdere foto’s selecteren.</div>
+
+    @if (Model?.Photos?.Any() == true)
+    {
+      <div class="row row-cols-2 g-2 mt-3">
+        @foreach (var p in Model.Photos)
+        {
+          <div class="col">
+            <div class="border rounded overflow-hidden">
+              <img src="@p.FilePath" class="img-fluid" alt="foto" />
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

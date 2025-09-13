@@ -1,0 +1,22 @@
+@using System.Globalization
+@model JabbadabbadoeBooking.Models.Booking
+@{
+    var nl = CultureInfo.GetCultureInfo("nl-NL");
+    Layout = null;
+    var publicLink = ViewBag.PublicLink as string; // <— optioneel meegeven bij renderen
+}
+<!doctype html>
+<html lang="nl">
+<head>
+    …
+</head>
+<body>
+    …
+    @* Toon knop alleen als er een link is meegegeven *@
+    @if (!string.IsNullOrWhiteSpace(publicLink))
+    {
+        <p><a class="btn" href="@publicLink">Bekijk je reservering</a></p>
+    }
+    …
+</body>
+</html>

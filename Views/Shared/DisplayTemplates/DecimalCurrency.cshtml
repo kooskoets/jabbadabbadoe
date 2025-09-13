@@ -1,0 +1,6 @@
+@model decimal
+@using System.Globalization
+@{
+    var nl = CultureInfo.GetCultureInfo("nl-NL");
+}
+@Model.ToString("C", nl)

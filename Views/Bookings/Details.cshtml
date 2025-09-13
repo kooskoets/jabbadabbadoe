@@ -1,43 +1,43 @@
+@using System.Globalization
+@using JabbadabbadoeBooking.Models
 @model JabbadabbadoeBooking.Models.Booking
+
 @{
-    ViewData["Title"] = "Reservering";
-
-    // Safe, zonder casts: als ViewBag.PinOk een bool is, gebruik die; anders false
-    bool pinOk = false;
-    if (ViewBag.PinOk is bool v)
-    {
-        pinOk = v;
-    }
+    var nl = CultureInfo.GetCultureInfo("nl-NL");
+    bool pinOk = ViewBag.PinOk is bool v && v;
 }
-<div class="card shadow-sm">
-  <div class="card-body">
-    <h1 class="h4">Reservering #@Model.Id</h1>
-    @if (!pinOk) {
-        <div class="alert alert-warning">Je bekijkt de reservering in leesmodus. Open via de link uit je e-mail om de PIN-beveiligde versie te zien.</div>
-    }
-    @if (TempData["Message"] != null) {
-        <div class="alert alert-info">@TempData["Message"]</div>
-    }
-    <dl class="row">
-      <dt class="col-sm-3">Naam</dt><dd class="col-sm-9">@Model.FirstName @Model.LastName</dd>
-      <dt class="col-sm-3">Periode</dt><dd class="col-sm-9">@Model.CheckIn:dd-MM-yyyy – @Model.CheckOut:dd-MM-yyyy</dd>
-      <dt class="col-sm-3">Gasten</dt><dd class="col-sm-9">@Model.Guests</dd>
-      <dt class="col-sm-3">Totaal</dt><dd class="col-sm-9">€ @Model.TotalPrice.ToString("F2")</dd>
-      <dt class="col-sm-3">Status</dt><dd class="col-sm-9">@Model.Status</dd>
-      <dt class="col-sm-3">E-mail</dt><dd class="col-sm-9">@Model.Email</dd>
-      <dt class="col-sm-3">Adres</dt><dd class="col-sm-9">@Model.Address, @Model.PostalCode @Model.City, @Model.Country</dd>
-    </dl>
 
-    <div class="d-flex gap-2">
-      <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Terug</a>
+<dl class="row">
+    <dt class="col-sm-3">Naam</dt>
+    <dd class="col-sm-9">@Model.FirstName @Model.LastName</dd>
 
-      <a class="btn btn-outline-danger"
-         asp-controller="Bookings"
-         asp-action="Cancel"
-         asp-route-id="@Model.Id"
-         onclick="return confirm('Weet je zeker dat je deze reservering wilt annuleren?');">
-         Annuleer reservering
-      </a>
-    </div>
-  </div>
-</div>
+    <dt class="col-sm-3">Periode</dt>
+    <dd class="col-sm-9">@Model.CheckIn.ToString("dd-MM-yyyy", nl) – @Model.CheckOut.ToString("dd-MM-yyyy", nl)</dd>
+
+    <dt class="col-sm-3">Gasten</dt>
+    <dd class="col-sm-9">@Model.Guests</dd>
+
+    <dt class="col-sm-3">Totaal</dt>
+    <dd class="col-sm-9">€ @Model.TotalPrice.ToString("N2", nl)</dd>
+
+    <dt class="col-sm-3">Status</dt>
+    <dd class="col-sm-9">
+        @switch (Model.Status)
+        {
+            case BookingStatus.Confirmed:
+                <span class="badge bg-success">Confirmed</span>
+                break;
+            case BookingStatus.Cancelled:
+                <span class="badge bg-secondary">Cancelled</span>
+                break;
+            default:
+                <span class="badge bg-warning text-dark">Pending</span>
+                break;
+        }
+    </dd>
+
+    <dt class="col-sm-3">E-mail</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+    <dt class="col-sm-3">Adres</dt>
+    <dd class="col-sm-9">@Model.Address, @Model.PostalCode @Model.City, @Model.Country</dd>
+</dl>

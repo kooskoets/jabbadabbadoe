@@ -1,0 +1,12 @@
+@model JabbadabbadoeBooking.Models.Space
+@{
+    ViewData["Title"] = "Verwijderen";
+}
+<h1 class="h3 mb-3">Appartement verwijderen</h1>
+<p>Weet je zeker dat je <strong>@Model.Title</strong> wilt verwijderen? Dit verwijdert ook alle gekoppelde foto’s.</p>
+
+<form asp-action="Delete" method="post">
+  <input type="hidden" asp-for="Id" />
+  <a asp-action="Index" class="btn btn-outline-secondary">Annuleer</a>
+  <button type="submit" class="btn btn-danger">Verwijderen</button>
+</form>

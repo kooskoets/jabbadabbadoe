@@ -1,6 +1,6 @@
+﻿using JabbadabbadoeBooking.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using JabbadabbadoeBooking.Models;
 
 namespace JabbadabbadoeBooking.Data;
 

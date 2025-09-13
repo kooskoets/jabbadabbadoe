@@ -1,0 +1,28 @@
+@using System.Globalization
+@model JabbadabbadoeBooking.Models.Booking
+@{
+    var nl = CultureInfo.GetCultureInfo("nl-NL");
+    Layout = null;
+}
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <title>Reservering #@Model.Id geannuleerd</title>
+  <style>
+    body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:#222; }
+    .muted { color:#666; }
+  </style>
+</head>
+<body>
+  <h2>Reservering geannuleerd</h2>
+  <p>Beste @Model.FirstName,</p>
+  <p>Je reservering is geannuleerd.</p>
+  <ul>
+    <li><strong>Periode:</strong> @Model.CheckIn.ToString("dd-MM-yyyy", nl) – @Model.CheckOut.ToString("dd-MM-yyyy", nl)</li>
+    <li><strong>Aantal gasten:</strong> @Model.Guests</li>
+    <li><strong>Totaal:</strong> € @Model.TotalPrice.ToString("N2", nl)</li>
+  </ul>
+  <p class="muted">Als dit niet klopt, neem dan direct contact met ons op.</p>
+</body>
+</html>

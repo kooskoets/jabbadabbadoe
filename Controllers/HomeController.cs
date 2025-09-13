@@ -1,7 +1,7 @@
+﻿using JabbadabbadoeBooking.Data;
+using JabbadabbadoeBooking.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using JabbadabbadoeBooking.Data;
-using JabbadabbadoeBooking.Models;
 
 namespace JabbadabbadoeBooking.Controllers;
 

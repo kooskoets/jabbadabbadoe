@@ -1,0 +1,47 @@
+@model JabbadabbadoeBooking.Models.Space
+@{
+    ViewData["Title"] = "Appartement";
+    var nl = System.Globalization.CultureInfo.GetCultureInfo("nl-NL");
+}
+<h1 class="h3 mb-3">@Model.Title</h1>
+
+<div class="row g-4">
+  <div class="col-md-7">
+    <p class="lead text-muted">€ @Model.NightlyRate.ToString("N2", nl) per nacht · Max @Model.MaxGuests gasten</p>
+    <p>@Model.Description</p>
+  </div>
+  <div class="col-md-5">
+    @if (Model.Photos?.Any() == true)
+    {
+      <div id="carouselSpace" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner rounded border">
+          @{
+            var first = true;
+            foreach (var p in Model.Photos)
+            {
+              <div class="carousel-item @(first ? "active" : "")">
+                <img src="@p.FilePath" class="d-block w-100" alt="foto">
+              </div>
+              first = false;
+            }
+          }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselSpace" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselSpace" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>
+    }
+    else
+    {
+      <div class="border rounded p-5 text-center text-muted">Nog geen foto’s</div>
+    }
+  </div>
+</div>
+
+<div class="mt-4">
+  <a asp-action="Index" class="btn btn-outline-secondary">Terug</a>
+  <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Wijzig</a>
+</div>

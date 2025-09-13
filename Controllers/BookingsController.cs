@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using JabbadabbadoeBooking.Data;
+﻿using JabbadabbadoeBooking.Data;
 using JabbadabbadoeBooking.Models;
 using JabbadabbadoeBooking.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace JabbadabbadoeBooking.Controllers;
 

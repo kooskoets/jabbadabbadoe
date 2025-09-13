@@ -1,64 +1,63 @@
+@using System.Globalization
+@using JabbadabbadoeBooking.Models
 @model IEnumerable<JabbadabbadoeBooking.Models.Booking>
+
 @{
     ViewData["Title"] = "Admin — Reserveringen";
+    var nl = CultureInfo.GetCultureInfo("nl-NL");
 }
 
-<h2 class="mb-3">Admin — Reserveringen</h2>
+<div class="container-lg">
+    <h1 class="h3 mb-4">Admin — Reserveringen</h1>
 
-@if (TempData["Message"] != null) {
-    <div class="alert alert-info">@TempData["Message"]</div>
-}
-
-<table class="table table-striped align-middle">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Naam</th>
-      <th>Periode</th>
-      <th class="text-center">Gasten</th>
-      <th class="text-end">Totaal</th>
-      <th>Status</th>
-      <th class="text-end">Acties</th>
-    </tr>
-  </thead>
-  <tbody>
-  @foreach (var b in Model) {
-    <tr>
-      <td>@b.Id</td>
-      <td>@b.FirstName @b.LastName</td>
-      <td>@b.CheckIn:dd-MM-yyyy – @b.CheckOut:dd-MM-yyyy</td>
-      <td class="text-center">@b.Guests</td>
-      <td class="text-end">€ @b.TotalPrice.ToString("N2")</td>
-      <td>
-        @if (b.Status == JabbadabbadoeBooking.Models.BookingStatus.Pending) {
-            <span class="badge bg-warning text-dark">Pending</span>
-        } else if (b.Status == JabbadabbadoeBooking.Models.BookingStatus.Confirmed) {
-            <span class="badge bg-success">Confirmed</span>
-        } else if (b.Status == JabbadabbadoeBooking.Models.BookingStatus.Cancelled) {
-            <span class="badge bg-secondary">Cancelled</span>
-        } else {
-            @b.Status
-        }
-      </td>
-      <td class="text-end">
-        <a class="btn btn-sm btn-outline-primary"
-           asp-controller="Bookings" asp-action="Details" asp-route-id="@b.Id">Open</a>
-
-        <a class="btn btn-sm btn-outline-danger"
-           asp-controller="Bookings" asp-action="Cancel" asp-route-id="@b.Id"
-           onclick="return confirm('Annuleer reservering #@b.Id?');">Annuleer</a>
-
-        @if (b.Status == JabbadabbadoeBooking.Models.BookingStatus.Pending) {
-            <form asp-controller="Bookings" asp-action="MarkPaid" method="post" class="d-inline">
-                <input type="hidden" name="id" value="@b.Id" />
-                <button type="submit" class="btn btn-sm btn-outline-success"
-                        onclick="return confirm('Markeer reservering #@b.Id als betaald?');">
-                    Markeer betaald
-                </button>
-            </form>
-        }
-      </td>
-    </tr>
-  }
-  </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-nowrap">#</th>
+                    <th>Naam</th>
+                    <th>Periode</th>
+                    <th class="text-center">Gasten</th>
+                    <th class="text-end">Totaal</th>
+                    <th>Status</th>
+                    <th class="text-end">Acties</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var b in Model.OrderByDescending(x => x.Id))
+                {
+                    <tr>
+                        <td class="text-muted">@b.Id</td>
+                        <td>@b.FirstName @b.LastName</td>
+                        <td>
+                            @b.CheckIn.ToString("dd-MM-yyyy", nl) – @b.CheckOut.ToString("dd-MM-yyyy", nl)
+                        </td>
+                        <td class="text-center">@b.Guests</td>
+                        <td class="text-end">€ @b.TotalPrice.ToString("N2", nl)</td>
+                        <td>
+                            @{
+                                var badge = b.Status switch
+                                {
+                                    BookingStatus.Confirmed => "success",
+                                    BookingStatus.Cancelled => "secondary",
+                                    _ => "warning text-dark"
+                                };
+                                var label = b.Status.ToString(); // "Confirmed", "Cancelled", "Pending"
+                            }
+                            <span class="badge bg-@badge px-3 py-2">@label</span>
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-sm btn-outline-primary"
+                                   asp-controller="Bookings" asp-action="Details" asp-route-id="@b.Id">Open</a>
+                                <a class="btn btn-sm btn-outline-danger"
+                                   asp-controller="Bookings" asp-action="Cancel" asp-route-id="@b.Id"
+                                   onclick="return confirm('Annuleer reservering #@b.Id?');">Annuleer</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

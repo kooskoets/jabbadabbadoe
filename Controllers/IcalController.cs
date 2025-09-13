@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Ical.Net;
-using Ical.Net.DataTypes;
+﻿using Ical.Net;
 using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using JabbadabbadoeBooking.Data;
 using JabbadabbadoeBooking.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace JabbadabbadoeBooking.Controllers;
 

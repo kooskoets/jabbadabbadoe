@@ -1,0 +1,6 @@
+@model System.DateOnly
+@using System.Globalization
+@{
+    var nl = CultureInfo.GetCultureInfo("nl-NL");
+}
+@Model.ToString("dd-MM-yyyy", nl)
