@@ -21,7 +21,8 @@ public class AdminSpacesController : Controller
 
     public async Task<IActionResult> Index()
     {
-        return View(await _db.Spaces.Include(s => s.Photos).ToListAsync());
+        var items = await _db.Spaces.Include(s => s.Photos).OrderByDescending(s => s.Id).ToListAsync();
+        return View(items);
     }
 
     public async Task<IActionResult> Details(int id)
@@ -31,7 +32,7 @@ public class AdminSpacesController : Controller
         return View(space);
     }
 
-    public IActionResult Create() => View();
+    public IActionResult Create() => View(new Space());
 
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Space space, List<IFormFile> files)
@@ -40,13 +41,15 @@ public class AdminSpacesController : Controller
         _db.Spaces.Add(space);
         await _db.SaveChangesAsync();
 
-        foreach (var file in files)
+        foreach (var f in files ?? Enumerable.Empty<IFormFile>())
         {
-            var path = await _storage.SaveImageAsync(file, space.Id);
-            _db.SpacePhotos.Add(new SpacePhoto { SpaceId = space.Id, FilePath = path });
+            if (f?.Length > 0)
+            {
+                var path = await _storage.SaveImageAsync(f, space.Id);
+                _db.SpacePhotos.Add(new SpacePhoto { SpaceId = space.Id, FilePath = path });
+            }
         }
         await _db.SaveChangesAsync();
-
         return RedirectToAction(nameof(Index));
     }
 
@@ -60,19 +63,26 @@ public class AdminSpacesController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, Space space, List<IFormFile> files)
     {
-        if (id != space.Id) return NotFound();
+        if (id != space.Id) return BadRequest();
         if (!ModelState.IsValid) return View(space);
+        var dbSpace = await _db.Spaces.Include(s => s.Photos).FirstOrDefaultAsync(s => s.Id == id);
+        if (dbSpace == null) return NotFound();
 
-        _db.Update(space);
-        await _db.SaveChangesAsync();
+        dbSpace.Title = space.Title;
+        dbSpace.Description = space.Description;
+        dbSpace.NightlyRate = space.NightlyRate;
+        dbSpace.CleaningFee = space.CleaningFee;
+        dbSpace.MaxGuests = space.MaxGuests;
 
-        foreach (var file in files)
+        foreach (var f in files ?? Enumerable.Empty<IFormFile>())
         {
-            var path = await _storage.SaveImageAsync(file, space.Id);
-            _db.SpacePhotos.Add(new SpacePhoto { SpaceId = space.Id, FilePath = path });
+            if (f?.Length > 0)
+            {
+                var path = await _storage.SaveImageAsync(f, dbSpace.Id);
+                _db.SpacePhotos.Add(new SpacePhoto { SpaceId = dbSpace.Id, FilePath = path });
+            }
         }
         await _db.SaveChangesAsync();
-
         return RedirectToAction(nameof(Index));
     }
 
@@ -88,12 +98,8 @@ public class AdminSpacesController : Controller
     {
         var space = await _db.Spaces.Include(s => s.Photos).FirstOrDefaultAsync(s => s.Id == id);
         if (space == null) return NotFound();
-
-        foreach (var photo in space.Photos)
-        {
-            _storage.DeleteImage(photo.FilePath);
-        }
-
+        foreach (var p in space.Photos) _storage.DeleteImage(p.FilePath);
+        _db.SpacePhotos.RemoveRange(space.Photos);
         _db.Spaces.Remove(space);
         await _db.SaveChangesAsync();
         return RedirectToAction(nameof(Index));

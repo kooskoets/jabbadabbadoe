@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using JabbadabbadoeBooking.Data;
 using JabbadabbadoeBooking.Models;
 using Microsoft.EntityFrameworkCore;
@@ -27,5 +28,11 @@ public class BookingService
         return (space.NightlyRate * nights) + space.CleaningFee;
     }
 
-    public string GeneratePin() => new Random().Next(100000, 999999).ToString();
+    public string GeneratePin()
+{
+    Span<byte> bytes = stackalloc byte[4];
+    RandomNumberGenerator.Fill(bytes);
+    var val = (BitConverter.ToUInt32(bytes) % 900000) + 100000; // 6 cijfers
+    return val.ToString();
+}
 }

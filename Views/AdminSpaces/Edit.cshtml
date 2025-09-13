@@ -1,14 +1,26 @@
 @model JabbadabbadoeBooking.Models.Space
-@{
-    ViewData["Title"] = "Appartement wijzigen";
-}
-<h1 class="h3 mb-3">Appartement wijzigen</h1>
-
+<h1>Appartement wijzigen</h1>
 <form asp-action="Edit" method="post" enctype="multipart/form-data">
-  <input type="hidden" asp-for="Id" />
-  <partial name="_Form" model="Model" />
-  <div class="mt-3">
-    <a asp-action="Index" class="btn btn-outline-secondary">Terug</a>
-    <button class="btn btn-primary" type="submit">Opslaan</button>
+  <input type="hidden" asp-for="Id"/>
+  <div class="mb-3">
+    <label asp-for="Title" class="form-label"></label>
+    <input asp-for="Title" class="form-control"/>
   </div>
+  <div class="mb-3">
+    <label asp-for="Description" class="form-label"></label>
+    <textarea asp-for="Description" class="form-control"></textarea>
+  </div>
+  <div class="mb-3">
+    <label>Nieuwe foto’s</label>
+    <input type="file" name="files" class="form-control" multiple />
+  </div>
+  <button class="btn btn-primary">Opslaan</button>
 </form>
+@if (Model.Photos?.Any() == true) {
+  <h3>Bestaande foto’s</h3>
+  <ul>
+    @foreach (var p in Model.Photos) {
+      <li><img src="@p.FilePath" style="max-width:160px"/></li>
+    }
+  </ul>
+}

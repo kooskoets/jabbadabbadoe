@@ -1,41 +1,19 @@
 @model IEnumerable<JabbadabbadoeBooking.Models.Space>
-@{
-    ViewData["Title"] = "Appartementen";
-    var nl = System.Globalization.CultureInfo.GetCultureInfo("nl-NL");
+<h1>Appartementen</h1>
+<p><a asp-action="Create" class="btn btn-primary">Nieuw toevoegen</a></p>
+<table class="table table-striped">
+<thead><tr><th>Titel</th><th>Foto's</th><th></th></tr></thead>
+<tbody>
+@foreach (var s in Model) {
+<tr>
+  <td>@s.Title</td>
+  <td>@(s.Photos?.Count ?? 0)</td>
+  <td>
+    <a asp-action="Details" asp-route-id="@s.Id">Details</a> |
+    <a asp-action="Edit" asp-route-id="@s.Id">Wijzig</a> |
+    <a asp-action="Delete" asp-route-id="@s.Id">Verwijder</a>
+  </td>
+</tr>
 }
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="h3">Appartementen</h1>
-  <a asp-action="Create" class="btn btn-primary">Nieuw appartement</a>
-</div>
-
-<table class="table table-hover align-middle">
-  <thead class="table-light">
-    <tr>
-      <th>#</th>
-      <th>Titel</th>
-      <th class="text-end">Prijs p/n</th>
-      <th class="text-center">Max gasten</th>
-      <th class="text-center">Foto’s</th>
-      <th class="text-end">Acties</th>
-    </tr>
-  </thead>
-  <tbody>
-  @foreach (var s in Model.OrderByDescending(x => x.Id))
-  {
-    <tr>
-      <td class="text-muted">@s.Id</td>
-      <td>@s.Title</td>
-      <td class="text-end">€ @s.NightlyRate.ToString("N2", nl)</td>
-      <td class="text-center">@s.MaxGuests</td>
-      <td class="text-center">@((s.Photos?.Count) ?? 0)</td>
-      <td class="text-end">
-        <div class="btn-group" role="group">
-          <a asp-action="Details" asp-route-id="@s.Id" class="btn btn-sm btn-outline-secondary">Bekijk</a>
-          <a asp-action="Edit" asp-route-id="@s.Id" class="btn btn-sm btn-outline-primary">Wijzig</a>
-          <a asp-action="Delete" asp-route-id="@s.Id" class="btn btn-sm btn-outline-danger">Verwijder</a>
-        </div>
-      </td>
-    </tr>
-  }
-  </tbody>
+</tbody>
 </table>

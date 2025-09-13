@@ -31,8 +31,8 @@ builder.Services.AddScoped<PaymentService>(); // laat staan; wordt gebruikt door
 
 // Admin Basic-auth registreren (zonder default scheme te overschrijven)
 builder.Services.AddAuthentication() // Identity blijft default
-    .AddScheme<JabbadabbadoeBooking.Security.AdminBasicAuthenticationOptions,
-               JabbadabbadoeBooking.Security.AdminBasicAuthenticationHandler>("AdminBasic", _ => { });
+    .AddScheme<JabbadabbadoeBooking.Services.AdminBasicAuthenticationOptions,
+               JabbadabbadoeBooking.Services.AdminBasicAuthenticationHandler>("AdminBasic", _ => { });
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("AdminOnly", policy =>
@@ -62,6 +62,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseSecurityHeaders();
 app.UseStaticFiles();
 app.UseRouting();
 

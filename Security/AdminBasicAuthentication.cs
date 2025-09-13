@@ -1,59 +1,73 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 
-namespace JabbadabbadoeBooking.Security;
-
-public class AdminBasicAuthenticationOptions : AuthenticationSchemeOptions { }
-
-public class AdminBasicAuthenticationHandler : AuthenticationHandler<AdminBasicAuthenticationOptions>
+namespace JabbadabbadoeBooking.Security
 {
-    public AdminBasicAuthenticationHandler(
-        IOptionsMonitor<AdminBasicAuthenticationOptions> options,
-        ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
-        : base(options, logger, encoder, clock) { }
+    public class AdminBasicAuthenticationOptions : AuthenticationSchemeOptions { }
 
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    /// <summary>
+    /// Eenvoudige Basic Auth voor het admin-gedeelte.
+    /// In .NET 8 gebruiken we de ingebouwde TimeProvider (base.TimeProvider) i.p.v. ISystemClock.
+    /// </summary>
+    public class AdminBasicAuthenticationHandler
+        : AuthenticationHandler<AdminBasicAuthenticationOptions>
     {
-        if (!Request.Headers.ContainsKey("Authorization"))
-            return Task.FromResult(AuthenticateResult.NoResult());
+        private readonly IConfiguration _config;
 
-        try
+        public AdminBasicAuthenticationHandler(
+            IOptionsMonitor<AdminBasicAuthenticationOptions> options,
+            ILoggerFactory logger,
+            UrlEncoder encoder,
+            ISystemClock obsoleteClock, // <-- blijft aanwezig als je DI al zo had geregistreerd; wordt NIET gebruikt
+            IConfiguration config
+        ) : base(options, logger, encoder)
         {
+            _config = config;
+        }
+
+        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        {
+            // Verwacht "Authorization: Basic base64(user:pass)"
+            if (!Request.Headers.ContainsKey("Authorization"))
+                return Task.FromResult(AuthenticateResult.NoResult());
+
             var header = Request.Headers["Authorization"].ToString();
             if (!header.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
                 return Task.FromResult(AuthenticateResult.NoResult());
 
-            var token = header.Substring("Basic ".Length).Trim();
-            var raw = Convert.FromBase64String(token);
-            var creds = Encoding.UTF8.GetString(raw).Split(':', 2);
-            if (creds.Length != 2)
-                return Task.FromResult(AuthenticateResult.Fail("Invalid basic header"));
+            try
+            {
+                var token = header.Substring("Basic ".Length).Trim();
+                var credentialBytes = Convert.FromBase64String(token);
+                var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':', 2);
 
-            const string USER = "admin";
-            const string PASS = "admin123";
+                var user = credentials.ElementAtOrDefault(0) ?? string.Empty;
+                var pass = credentials.ElementAtOrDefault(1) ?? string.Empty;
 
-            if (creds[0] != USER || creds[1] != PASS)
-                return Task.FromResult(AuthenticateResult.Fail("Bad credentials"));
+                var adminUser = _config["Admin:User"] ?? "admin";
+                var adminPass = _config["Admin:Pass"] ?? "admin";
 
-            var claims = new[] { new Claim(ClaimTypes.Name, USER), new Claim(ClaimTypes.Role, "Admin") };
-            var identity = new ClaimsIdentity(claims, Scheme.Name);
-            var principal = new ClaimsPrincipal(identity);
-            var ticket = new AuthenticationTicket(principal, Scheme.Name);
-            return Task.FromResult(AuthenticateResult.Success(ticket));
+                if (user == adminUser && pass == adminPass)
+                {
+                    var claims = new[]
+                    {
+                        new Claim(ClaimTypes.Name, user),
+                        new Claim(ClaimTypes.Role, "Admin")
+                    };
+                    var identity = new ClaimsIdentity(claims, Scheme.Name);
+                    var principal = new ClaimsPrincipal(identity);
+                    var ticket = new AuthenticationTicket(principal, Scheme.Name);
+                    return Task.FromResult(AuthenticateResult.Success(ticket));
+                }
+
+                return Task.FromResult(AuthenticateResult.Fail("Invalid credentials"));
+            }
+            catch
+            {
+                return Task.FromResult(AuthenticateResult.Fail("Invalid Authorization header"));
+            }
         }
-        catch
-        {
-            return Task.FromResult(AuthenticateResult.Fail("Auth error"));
-        }
-    }
-
-    protected override Task HandleChallengeAsync(AuthenticationProperties properties)
-    {
-        Response.StatusCode = 401;
-        Response.Headers["WWW-Authenticate"] = "Basic realm=\"Jabbadabbadoe Admin\"";
-        return Task.CompletedTask;
     }
 }

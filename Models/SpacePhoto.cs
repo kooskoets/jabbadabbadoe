@@ -1,23 +1,30 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System;
 
-namespace JabbadabbadoeBooking.Models
+namespace JabbadabbadoeBooking.Models;
+
+public class SpacePhoto
 {
+    public int Id { get; set; }
+    public int SpaceId { get; set; }
+
+    /// <summary>Bestandsnaam op schijf (zonder pad)</summary>
+    public string FileName { get; set; } = string.Empty;
+
+    /// <summary>Relatief pad voor <img src>, bv. /images/spaces/{SpaceId}/{FileName}</summary>
+    public string? RelativePath { get; set; }
+
     /// <summary>
-    /// Enige, definitieve versie van SpacePhoto.
-    /// Let op: er is slechts één key naar Space: SpaceId (int).
+    /// Compatibele alias die in views/controllers gebruikt kan zijn.
+    /// Leest/schrijft naar RelativePath.
     /// </summary>
-    public class SpacePhoto
+    public string FilePath
     {
-        public int Id { get; set; }
-
-        [Required]
-        public int SpaceId { get; set; }   // <-- dit is de enige foreign key eigenschap
-
-        [Required, MaxLength(500)]
-        public string FilePath { get; set; } = string.Empty;
-
-        [ForeignKey(nameof(SpaceId))]
-        public Space? Space { get; set; }
+        get => RelativePath ?? $"/images/spaces/{SpaceId}/{FileName}";
+        set => RelativePath = value;
     }
+
+    public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
+
+    // Navigatie
+    public Space? Space { get; set; }
 }

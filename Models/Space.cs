@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace JabbadabbadoeBooking.Models;
 
@@ -21,13 +22,15 @@ public class Space
 
     public int MaxGuests { get; set; }
 
-    public List<SpacePhoto> Photos { get; set; } = new();
-}
+    /// <summary>
+    /// Komma-gescheiden lijst met bestandsnamen, bv. "foto1.jpg,foto2.jpg".
+    /// Wordt door seed-code en oudere views gebruikt.
+    /// </summary>
+    public string? PhotoList { get; set; }
 
-public class SpacePhoto
-{
-    public int Id { get; set; }
-    public string FilePath { get; set; } = string.Empty;
-    public int SpaceId { get; set; }
-    public Space? Space { get; set; }
+    /// <summary>
+    /// Optionele navigatie als je met aparte entiteiten werkt.
+    /// Niet vereist voor compilatie; laat staan als je SpacePhoto gebruikt.
+    /// </summary>
+    public List<SpacePhoto> Photos { get; set; } = new();
 }
