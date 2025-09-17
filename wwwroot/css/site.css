@@ -1,1 +1,12 @@
+<<<<<<< Updated upstream
 body{background:#fafafa}.calendar td{height:42px}
+=======
+/* Minimal styles so you can SEE it's applied even zonder Bootstrap */
+body { background: #f8f9fa; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+h1,h2,h3 { letter-spacing: .2px; }
+a { color: #0d6efd; }
+.container { max-width: 960px; }
+img { max-width: 100%; height: auto; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 12px; }
+.gallery img { border-radius: 12px; box-shadow: 0 4px 18px rgba(0,0,0,.06); }
+>>>>>>> Stashed changes

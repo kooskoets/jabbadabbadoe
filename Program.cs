@@ -4,18 +4,14 @@ using JabbadabbadoeBooking.Data;
 using JabbadabbadoeBooking.Services;   // voor BookingService/PaymentService
 using JabbadabbadoeBooking.Security;   // voor de Basic-auth klassen
 
-// Aliassen om ambiguïteit te voorkomen
+// Aliassen om ambiguÃ¯teit te voorkomen
 using AdminBasicOptions = JabbadabbadoeBooking.Security.AdminBasicAuthenticationOptions;
 using AdminBasicHandler = JabbadabbadoeBooking.Security.AdminBasicAuthenticationHandler;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// MVC + Identity UI
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
-
-// EF Core + Identity
+// === Services ===
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -42,11 +38,8 @@ builder.Services.AddAuthorizationBuilder()
         policy.RequireAuthenticatedUser()
               .AddAuthenticationSchemes("AdminBasic"));
 
-// Moderne AuthorizationBuilder (voorkomt ASP0025)
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("AdminOnly", policy =>
-        policy.RequireAuthenticatedUser()
-              .AddAuthenticationSchemes("AdminBasic"));
+// Image storage service
+builder.Services.AddSingleton<IImageStorageService, ImageStorageService>();
 
 var app = builder.Build();
 

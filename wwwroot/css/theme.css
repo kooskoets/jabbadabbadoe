@@ -1,0 +1,55 @@
+/* Theme: full-page background + glass content cards */
+:root {
+    --bg-blur: 6px;
+    --bg-darken: 0.35;
+}
+
+html, body {
+    height: 100%;
+}
+
+/* Background image sits behind everything */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: rgba(0,0,0,var(--bg-darken)) center/cover no-repeat,
+                url("/images/background.jpg") center/cover no-repeat fixed;
+    /* The first layer darkens, second is the image */
+    background-blend-mode: multiply;
+    filter: blur(var(--bg-blur));
+    transform: scale(1.02); /* compensate blur crop */
+}
+
+/* Make main content readable on photo background */
+main.container, .container {
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: saturate(1.2) blur(2px);
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+    padding: 1.25rem 1.5rem;
+}
+
+header, footer {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(3px);
+}
+
+h1, h2, h3 {
+    text-shadow: 0 1px 0 rgba(255,255,255,.8);
+}
+
+/* Small gallery polish without changing markup */
+img {
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.20);
+    margin-bottom: .5rem;
+}
+
+/* Calendar tweaks */
+table, .calendar {
+    background: rgba(255,255,255,0.92);
+    border-radius: 12px;
+    padding: .5rem;
+}

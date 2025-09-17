@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Ical.Net;
 using Ical.Net.DataTypes;
@@ -29,7 +29,7 @@ public class IcalController : Controller
             var e = new CalendarEvent
             {
                 Summary = $"Bezet — Booking #{b.Id}",
-                // all-day: gebruik de Y/M/D ctor, dan is HasTime automatisch false
+                // all-day: use Y/M/D ctor, HasTime=false
                 DtStart = new CalDateTime(b.CheckIn.Year, b.CheckIn.Month, b.CheckIn.Day),
                 DtEnd = new CalDateTime(b.CheckOut.Year, b.CheckOut.Month, b.CheckOut.Day),
             };
@@ -37,9 +37,8 @@ public class IcalController : Controller
             cal.Events.Add(e);
         }
 
-
         var serializer = new CalendarSerializer();
-        var ics = serializer.SerializeToString(cal);
+        var ics = serializer.SerializeToString(cal) ?? string.Empty;
         return File(System.Text.Encoding.UTF8.GetBytes(ics), "text/calendar", "space.ics");
     }
 }
